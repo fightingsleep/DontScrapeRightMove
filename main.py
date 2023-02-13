@@ -2,6 +2,7 @@ import os
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -51,11 +52,12 @@ def main() -> None:
     time_span_select = Select(time_span_select_element)
     time_span_select.select_by_visible_text(ADDED_TO_SITE)
 
-    WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//div[contains(@class,'filters-action--submit')]/button[1]")))
+    # Click the 'Accept Cookies' button that seems to always pop up here
+    accept_cookies_button = driver.find_element(by=By.CLASS_NAME, value="accept-cookies-button")
+    accept_cookies_button.click()
 
-    # Click 'Done' button to apply filters
-    done_button = driver.find_element(by=By.XPATH, value="//div[contains(@class,'filters-action--submit')]/button[1]")
-    done_button.click()
+    # Click the filter button again to close the filters window
+    filter_button.send_keys('\n')
 
     input("Press enter to exit")
 
