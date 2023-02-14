@@ -39,7 +39,7 @@ def main() -> None:
     find_properties_button.click()
 
     # Choose the sort order
-    sort_order_select_element = driver.find_element(By.ID, 'sortType')
+    sort_order_select_element = driver.find_element(By.ID, "sortType")
     sort_order_select = Select(sort_order_select_element)
     sort_order_select.select_by_visible_text(SORT_ORDER)
 
@@ -48,7 +48,7 @@ def main() -> None:
     filter_button.click()
 
     # Choose the time span
-    time_span_select_element = driver.find_element(By.NAME, 'addedToSite')
+    time_span_select_element = driver.find_element(By.NAME, "addedToSite")
     time_span_select = Select(time_span_select_element)
     time_span_select.select_by_visible_text(ADDED_TO_SITE)
 
@@ -56,8 +56,21 @@ def main() -> None:
     accept_cookies_button = driver.find_element(by=By.CLASS_NAME, value="accept-cookies-button")
     accept_cookies_button.click()
 
-    # Click the filter button again to close the filters window
+    # TODO: There appears to be an issue with the chrome driver that makes it struggle to click buttons
+    # that are wrapped in empty <div></div>. This is a workaround to be able to close the filters window
     filter_button.send_keys('\n')
+
+    # Loop through the listings
+    listings = driver.find_elements(by=By.XPATH, value="//div[@id='l-searchResults']/div/div")
+    listing_we_care_about = []
+    for listing in listings:
+        is_featured = listing.find_elements(by=By.CLASS_NAME, value="propertyCard--featured")
+        if len(is_featured) != 0:
+            continue
+        # Lets only consider the listings with 2 bathrooms
+        num_bathrooms = listing.find_element(by=By.XPATH, value=".//span[@class='no-svg-bathroom-icon']/svg/title").text
+        if num_bathrooms == "2 bathrooms":
+            listing_we_care_about.add(listing)
 
     input("Press enter to exit")
 
