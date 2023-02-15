@@ -61,14 +61,14 @@ def main() -> None:
     filter_button.send_keys('\n')
 
     # Loop through the listings
-    listings = driver.find_elements(by=By.XPATH, value="//div[@id='l-searchResults']/div/div")
+    listings = driver.find_elements(by=By.CLASS_NAME, value="l-searchResult")
     listing_we_care_about = []
     for listing in listings:
         is_featured = listing.find_elements(by=By.CLASS_NAME, value="propertyCard--featured")
         if len(is_featured) != 0:
             continue
         # Lets only consider the listings with 2 bathrooms
-        num_bathrooms = listing.find_element(by=By.XPATH, value=".//span[@class='no-svg-bathroom-icon']/svg/title").text
+        num_bathrooms = listing.find_element(by=By.XPATH, value=".//*[name()='svg']//*[name()='title']").text
         if num_bathrooms == "2 bathrooms":
             listing_we_care_about.add(listing)
 
