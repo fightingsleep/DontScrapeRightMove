@@ -1,4 +1,5 @@
 import os
+import argparse
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -14,12 +15,22 @@ PATH_TO_CHROME_DRIVER = "C:\\Users\\chris\\Downloads\\chromedriver_win32"
 WEBSITE_URL = "https://www.rightmove.co.uk/"
 
 # TODO: Make these params
-LOCATION_TO_SEARCH = "SE10"
+DEFAULT_LOCATION_TO_SEARCH = "SE10"
 SORT_ORDER = "Newest Listed"
 ADDED_TO_SITE = "Last 24 hours"
 
 def main() -> None:
     os.environ["PATH"] += os.pathsep + PATH_TO_CHROME_DRIVER
+
+    parser = argparse.ArgumentParser(
+        prog="DontScrapeRightMove",
+        description="Scrapes listing data from rightmove.co.uk")
+    parser.add_argument("-l", "--location", help="The location to search for listings")
+    args = parser.parse_args()
+
+    location_to_search = DEFAULT_LOCATION_TO_SEARCH
+    if args.location is not None:
+        location_to_search = args.location
 
     # Start the web driver and load the website
     driver = webdriver.Chrome()
@@ -31,7 +42,7 @@ def main() -> None:
     for_sale_button = driver.find_element(by=By.XPATH, value="//button[text()='For Sale']")
 
     # Enter the location and proceed to the next page
-    search_box.send_keys(LOCATION_TO_SEARCH)
+    search_box.send_keys(location_to_search)
     for_sale_button.click()
 
     # Click 'Find properties' button to perform the search
