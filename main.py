@@ -16,7 +16,7 @@ WEBSITE_URL = "https://www.rightmove.co.uk/"
 
 # TODO: Make these params
 DEFAULT_LOCATION_TO_SEARCH = "SE10"
-SORT_ORDER = "Newest Listed"
+DEFAULT_SORT_ORDER = "Newest Listed"
 ADDED_TO_SITE = "Last 24 hours"
 
 def main() -> None:
@@ -26,11 +26,17 @@ def main() -> None:
         prog="DontScrapeRightMove",
         description="Scrapes listing data from rightmove.co.uk")
     parser.add_argument("-l", "--location", help="The location to search for listings")
+    parser.add_argument("-s", "--sortorder", help="The order in which to sort the listings " +
+        "valid values are: 'Newest Listed', 'Oldest Listed', 'Highest Price', 'Lowest Price'")
     args = parser.parse_args()
 
     location_to_search = DEFAULT_LOCATION_TO_SEARCH
     if args.location is not None:
         location_to_search = args.location
+
+    sort_order = DEFAULT_SORT_ORDER
+    if args.sortorder is not None:
+        sort_order = args.sortorder
 
     # Start the web driver and load the website
     driver = webdriver.Chrome()
@@ -52,7 +58,7 @@ def main() -> None:
     # Choose the sort order
     sort_order_select_element = driver.find_element(By.ID, "sortType")
     sort_order_select = Select(sort_order_select_element)
-    sort_order_select.select_by_visible_text(SORT_ORDER)
+    sort_order_select.select_by_visible_text(sort_order)
 
     # Open the filters section
     filter_button = driver.find_element(by=By.CLASS_NAME, value="filtersBar-more")
