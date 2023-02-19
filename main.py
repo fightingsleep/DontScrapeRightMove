@@ -85,9 +85,13 @@ def main() -> None:
         if len(is_featured) != 0:
             continue
         # Lets only consider the listings with 2 bathrooms
-        num_bathrooms = listing.find_element(by=By.XPATH, value=".//*[name()='svg']//*[name()='title']").text
-        if num_bathrooms == "2 bathrooms":
-            listing_we_care_about.add(listing)
+        try:
+            bathroom_element = listing.find_element(by=By.XPATH, value=".//span[@class='bathroom-icon']/*[local-name()='svg' and namespace-uri()='http://www.w3.org/2000/svg']/*[local-name()='title']")
+            num_bathrooms = bathroom_element.get_attribute("textContent")
+            if num_bathrooms == "2 bathrooms":
+                listing_we_care_about.append(listing)
+        except:
+            continue
 
     input("Press enter to exit")
 
